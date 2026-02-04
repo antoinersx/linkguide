@@ -1,0 +1,20 @@
+{
+  "name": "link-guide",
+  "version": "1.0.0",
+  "description": "Smart bio link with survey-driven results",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "fastify": "^4.26.0",
+    "@fastify/static": "^6.12.0",
+    "@fastify/cors": "^9.0.0",
+    "sqlite3": "^5.1.7",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}

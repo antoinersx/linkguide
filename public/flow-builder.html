@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkGuide - Visual Flow Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --primary: #3b82f6;
+      --primary-light: #60a5fa;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --border: #334155;
+      --radius: 12px;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .header {
+      height: 60px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      position: relative;
+      z-index: 100;
+    }
+    
+    .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .header-actions { display: flex; gap: 12px; }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-secondary { background: var(--surface-hover); color: var(--text); }
+    .btn-success { background: var(--success); color: white; }
+    
+    /* Layout */
+    .layout {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 300px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .sidebar-tab {
+      flex: 1;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    
+    .sidebar-tab:hover { color: var(--text); }
+    .sidebar-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+    
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    
+    /* Draggable Items */
+    .palette-section {
+      margin-bottom: 24px;
+    }
+    
+    .palette-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    
+    .palette-item {
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 8px;
+      cursor: grab;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .palette-item:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    
+    .palette-item:active { cursor: grabbing; }
+    
+    .palette-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--surface-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .palette-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    /* Resources List */
+    .resource-item {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    
+    .resource-item:hover { border-color: var(--primary); }
+    .resource-item.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+    
+    .resource-name { font-weight: 600; margin-bottom: 4px; }
+    .resource-meta { font-size: 12px; color: var(--text-secondary); }
+    
+    /* Canvas */
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      overflow: auto;
+      background: 
+        radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+    
+    #canvas {
+      position: absolute;
+      width: 2000px;
+      height: 1500px;
+      transform-origin: 0 0;
+    }
+    
+    /* Nodes */
+    .node {
+      position: absolute;
+      width: 280px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      cursor: grab;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+    
+    .node:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+    .node.dragging { cursor: grabbing; opacity: 0.8; }
+    
+    .node-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .node-type {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--bg);
+    }
+    
+    .node-type.question { color: var(--primary-light); }
+    .node-type.resource { color: var(--success); }
+    .node-type.result { color: var(--warning); }
+    
+    .node-actions {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .node-action {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    
+    .node-action:hover { background: var(--surface-hover); color: var(--text); }
+    
+    .node-content {
+      padding: 16px;
+    }
+    
+    .node-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    .node-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    
+    /* Node Options */
+    .node-options {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+    }
+    
+    .node-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      margin-bottom: 4px;
+      background: var(--bg);
+      border-radius: 8px;
+      font-size: 13px;
+      position: relative;
+    }
+    
+    .option-connector {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: crosshair;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    
+    .option-connector:hover { background: var(--primary); transform: scale(1.3); }
+    .option-connector.connected { background: var(--success); }
+    
+    /* Connection Points */
+    .connection-point {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--border);
+      border: 2px solid var(--surface);
+      cursor: crosshair;
+      transition: all 0.2s;
+      z-index: 10;
+    }
+    
+    .connection-point:hover { background: var(--primary); transform: scale(1.3); }
+    .connection-point.input { left: -8px; top: 50%; transform: translateY(-50%); }
+    .connection-point.output { right: -8px; top: 50%; transform: translateY(-50%); }
+    
+    /* Connections (SVG) */
+    #connections {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .connection-line {
+      stroke: var(--border);
+      stroke-width: 2;
+      fill: none;
+      pointer-events: stroke;
+      transition: stroke 0.2s;
+    }
+    
+    .connection-line:hover { stroke: var(--primary); stroke-width: 3; }
+    .connection-line.selected { stroke: var(--primary); stroke-width: 3; }
+    
+    .connection-line.active-path { stroke: var(--success); }
+    
+    /* Drawing Line */
+    .drawing-line {
+      stroke: var(--primary);
+      stroke-width: 2;
+      stroke-dasharray: 5,5;
+      fill: none;
+      pointer-events: none;
+    }
+    
+    /* Properties Panel (Right Sidebar) */
+    .properties-panel {
+      width: 320px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .properties-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .prop-group { margin-bottom: 20px; }
+    .prop-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; display: block; }
+    
+    .prop-input {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .prop-input:focus { outline: none; border-color: var(--primary); }
+    textarea.prop-input { min-height: 80px; resize: vertical; }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    
+    /* Toolbar */
+    .toolbar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      gap: 8px;
+      z-index: 50;
+    }
+    
+    .tool-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.2s;
+    }
+    
+    .tool-btn:hover { background: var(--surface-hover); color: var(--text); }
+    .tool-btn.active { background: var(--primary); color: white; }
+    
+    /* Zoom Controls */
+    .zoom-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 50;
+    }
+    
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    
+    .zoom-btn:hover { background: var(--surface-hover); }
+    
+    /* Mini Map */
+    .minimap {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 200px;
+      height: 150px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      z-index: 50;
+      overflow: hidden;
+    }
+    
+    .minimap-content {
+      transform-origin: 0 0;
+    }
+    
+    /* Context Menu */
+    .context-menu {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 0;
+      min-width: 160px;
+      z-index: 200;
+      display: none;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .context-menu.show { display: block; }
+    
+    .context-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    
+    .context-item:hover { background: var(--surface-hover); }
+    .context-item.delete { color: var(--danger); }
+    .context-item.delete:hover { background: rgba(239, 68, 68, 0.1); }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">🔗 LinkGuide Flow Builder</div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="autoLayout()">🔄 Auto Layout</button>
+      <button class="btn btn-secondary" onclick="simulateFlow()">▶️ Simulate</button>
+      <button class="btn btn-success" onclick="saveFlow()">💾 Save Flow</button>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <div class="layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-tabs">
+        <div class="sidebar-tab active" onclick="switchSidebarTab('palette')">Components</div>
+        <div class="sidebar-tab" onclick="switchSidebarTab('resources')">Resources</div>
+      </div>
+      
+      <div class="sidebar-content" id="sidebarPalette">
+        <div class="palette-section">
+          <div class="palette-title">Questions</div>
+          <div class="palette-item" draggable="true" ondragstart="dragPaletteItem(event, 'question')">
+            <div class="palette-icon">❓</div>
+            <div class="palette-text">Question Node</div>
+          </div>
+          <div class="palette-item" draggable="true" ondragstart="dragPaletteItem(event, 'category')">
+            <div class="palette-icon">📂</div>
+            <div class="palette-text">Category Split</div>
+          </div>
+        </div>
+        
+        <div class="palette-section">
+          <div class="palette-title">Logic</div>
+          <div class="palette-item" draggable="true" ondragstart="dragPaletteItem(event, 'condition')">
+            <div class="palette-icon">⚡</div>
+            <div class="palette-text">Condition</div>
+          </div>
+          <div class="palette-item" draggable="true" ondragstart="dragPaletteItem(event, 'split')">
+            <div class="palette-icon">🔀</div>
+            <div class="palette-text">A/B Split</div>
+          </div>
+        </div>
+        
+        <div class="palette-section">
+          <div class="palette-title">End Points</div>
+          <div class="palette-item" draggable="true" ondragstart="dragPaletteItem(event, 'result')">
+            <div class="palette-icon">🎯</div>
+            <div class="palette-text">Result Page</div>
+          </div>
+          <div class="palette-item" draggable="true" ondragstart="dragPaletteItem(event, 'redirect')">
+            <div class="palette-icon">🔗</div>
+            <div class="palette-text">External Link</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sidebar-content hidden" id="sidebarResources">
+        <div class="palette-section">
+          <div class="palette-title">Your Resources</div>
+          <div id="resourcesList"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Canvas -->
+    <div class="canvas-container" id="canvasContainer">
+      <div id="canvas">
+        <svg id="connections">
+          <!-- Connections will be drawn here -->
+        </svg>
+        <!-- Nodes will be added here -->
+      </div>
+      
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="tool-btn active" title="Select" onclick="setTool('select')">👆</button>
+        <button class="tool-btn" title="Connect" onclick="setTool('connect')">🔗</button>
+        <button class="tool-btn" title="Pan" onclick="setTool('pan')">✋</button>
+        <button class="tool-btn" title="Delete" onclick="setTool('delete')">🗑️</button>
+      </div>
+      
+      <!-- Zoom Controls -->
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+      </div>
+    </div>
+
+    <!-- Properties Panel -->
+    <aside class="properties-panel" id="propertiesPanel">
+      <div class="empty-state">
+        <div class="empty-state-icon">👆</div>
+        <div class="empty-state-title">Select a node</div>
+        <p>Click on any node to edit its properties</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Context Menu -->
+  <div class="context-menu" id="contextMenu">
+    <div class="context-item" onclick="duplicateNode()">Duplicate</div>
+    <div class="context-item" onclick="bringToFront()">Bring to Front</div>
+    <div class="context-item" onclick="sendToBack()">Send to Back</div>
+    <div class="context-item delete" onclick="deleteSelected()">Delete</div>
+  </div>
+
+  <script>
+    // State
+    let nodes = [];
+    let connections = [];
+    let selectedNode = null;
+    let currentTool = 'select';
+    let scale = 1;
+    let isDrawing = false;
+    let drawStart = null;
+    let nodeIdCounter = 1;
+    
+    // Load data from server
+    async function loadData() {
+      const token = localStorage.getItem('lg_token') || '';
+      
+      try {
+        const [resourcesRes, surveyRes] = await Promise.all([
+          fetch('/api/admin/resources', { headers: { 'X-Token': token } }),
+          fetch('/api/admin/survey', { headers: { 'X-Token': token } })
+        ]);
+        
+        const resources = await resourcesRes.json();
+        const survey = await surveyRes.json();
+        
+        // Convert to visual format
+        convertToVisualFlow(resources, survey);
+        renderResources(resources);
+      } catch (err) {
+        console.error('Failed to load:', err);
+      }
+    }
+    
+    function convertToVisualFlow(resources, survey) {
+      const canvas = document.getElementById('canvas');
+      const canvasRect = canvas.getBoundingClientRect();
+      
+      // Create question nodes
+      survey.questions.forEach((q, i) => {
+        const node = {
+          id: `node-${nodeIdCounter++}`,
+          type: 'question',
+          x: 100 + (i * 350),
+          y: 100 + (i % 2) * 200,
+          title: q.text,
+          subtitle: q.subtitle || '',
+          options: q.options.map(o => ({
+            id: `opt-${Date.now()}-${Math.random()}`,
+            label: o.label,
+            value: o.value,
+            connectedTo: null
+          }))
+        };
+        nodes.push(node);
+        createNodeElement(node);
+      });
+      
+      // Create resource nodes
+      resources.resources.forEach((r, i) => {
+        const node = {
+          id: `node-${nodeIdCounter++}`,
+          type: 'result',
+          x: 100 + (survey.questions.length * 350),
+          y: 100 + (i * 150),
+          title: r.name,
+          subtitle: r.description,
+          url: r.url,
+          price: r.price,
+          category: r.category
+        };
+        nodes.push(node);
+        createNodeElement(node);
+      });
+      
+      // Create connections from rules
+      survey.rules.forEach(rule => {
+        // Find source question and target resource
+        const questionKeys = Object.keys(rule.if);
+        if (questionKeys.length > 0) {
+          const lastQuestionKey = questionKeys[questionKeys.length - 1];
+          const questionValue = rule.if[lastQuestionKey];
+          
+          // Find the matching option in the question
+          const sourceNode = nodes.find(n => n.type === 'question');
+          const targetNode = nodes.find(n => n.type === 'result' && n.title === rule.then.label);
+          
+          if (sourceNode && targetNode) {
+            const option = sourceNode.options.find(o => o.value === questionValue);
+            if (option) {
+              connections.push({
+                id: `conn-${Date.now()}`,
+                from: sourceNode.id,
+                to: targetNode.id,
+                fromOption: option.id,
+                label: option.label
+              });
+            }
+          }
+        }
+      });
+      
+      drawConnections();
+    }
+    
+    function createNodeElement(node) {
+      const el = document.createElement('div');
+      el.className = 'node';
+      el.id = node.id;
+      el.style.left = node.x + 'px';
+      el.style.top = node.y + 'px';
+      
+      const typeClass = node.type;
+      const typeLabel = node.type === 'question' ? 'Question' : 
+                        node.type === 'result' ? 'Result' : 'Logic';
+      
+      el.innerHTML = `
+        <div class="node-header">
+          <span class="node-type ${typeClass}">${typeLabel}</span>
+          <div class="node-actions">
+            <button class="node-action" onclick="editNode('${node.id}')">✏️</button>
+            <button class="node-action" onclick="deleteNode('${node.id}')">×</button>
+          </div>
+        </div>
+        <div class="node-content">
+          <div class="node-title">${node.title}</div>
+          ${node.subtitle ? `<div class="node-subtitle">${node.subtitle}</div>` : ''}
+        </div>
+        ${node.options ? `
+          <div class="node-options">
+            ${node.options.map(opt => `
+              <div class="node-option" data-option="${opt.id}">
+                <div class="option-connector" onmousedown="startConnection(event, '${node.id}', '${opt.id}')"></div>
+                <span>${opt.label}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      `;
+      
+      // Make draggable
+      el.addEventListener('mousedown', (e) => startDrag(e, node));
+      
+      document.getElementById('canvas').appendChild(el);
+    }
+    
+    function startDrag(e, node) {
+      if (currentTool !== 'select') return;
+      if (e.target.closest('.node-action') || e.target.closest('.option-connector')) return;
+      
+      e.preventDefault();
+      selectNode(node);
+      
+      const el = document.getElementById(node.id);
+      el.classList.add('dragging');
+      
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startNodeX = node.x;
+      const startNodeY = node.y;
+      
+      function onMouseMove(e) {
+        const dx = (e.clientX - startX) / scale;
+        const dy = (e.clientY - startY) / scale;
+        
+        node.x = startNodeX + dx;
+        node.y = startNodeY + dy;
+        
+        el.style.left = node.x + 'px';
+        el.style.top = node.y + 'px';
+        
+        drawConnections();
+      }
+      
+      function onMouseUp() {
+        el.classList.remove('dragging');
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+    
+    function drawConnections() {
+      const svg = document.getElementById('connections');
+      svg.innerHTML = '';
+      
+      connections.forEach(conn => {
+        const fromNode = nodes.find(n => n.id === conn.from);
+        const toNode = nodes.find(n => n.id === conn.to);
+        
+        if (!fromNode || !toNode) return;
+        
+        const fromEl = document.getElementById(fromNode.id);
+        const toEl = document.getElementById(toNode.id);
+        
+        // Calculate connection points
+        let startX = fromNode.x + 280;
+        let startY = fromNode.y + 60;
+        
+        if (conn.fromOption) {
+          const optEl = fromEl.querySelector(`[data-option="${conn.fromOption}"]`);
+          if (optEl) {
+            const connector = optEl.querySelector('.option-connector');
+            startY = fromNode.y + optEl.offsetTop + 24;
+          }
+        }
+        
+        const endX = toNode.x;
+        const endY = toNode.y + 60;
+        
+        // Draw bezier curve
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const midX = (startX + endX) / 2;
+        const d = `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
+        
+        path.setAttribute('d', d);
+        path.setAttribute('class', 'connection-line');
+        path.setAttribute('data-connection', conn.id);
+        path.addEventListener('click', () => selectConnection(conn));
+        
+        svg.appendChild(path);
+      });
+    }
+    
+    function selectNode(node) {
+      selectedNode = node;
+      document.querySelectorAll('.node').forEach(el => el.classList.remove('selected'));
+      document.getElementById(node.id).classList.add('selected');
+      
+      showNodeProperties(node);
+    }
+    
+    function showNodeProperties(node) {
+      const panel = document.getElementById('propertiesPanel');
+      
+      let optionsHtml = '';
+      if (node.options) {
+        optionsHtml = `
+          <div class="prop-group">
+            <label class="prop-label">Options</label>
+            ${node.options.map((opt, i) => `
+              <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                <input type="text" class="prop-input" value="${opt.label}" style="flex: 1;" onchange="updateOption('${node.id}', ${i}, 'label', this.value)">
+                <button class="btn btn-secondary" style="padding: 8px 12px;" onclick="removeOption('${node.id}', ${i})">×</button>
+              </div>
+            `).join('')}
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 8px;" onclick="addOption('${node.id}')">+ Add Option</button>
+          </div>
+        `;
+      }
+      
+      panel.innerHTML = `
+        <div class="properties-title">Edit ${node.type === 'question' ? 'Question' : 'Result'}</div>
+        
+        <div class="prop-group">
+          <label class="prop-label">Title</label>
+          <input type="text" class="prop-input" value="${node.title}" onchange="updateNode('${node.id}', 'title', this.value)">
+        </div>
+        
+        <div class="prop-group">
+          <label class="prop-label">Subtitle / Description</label>
+          <textarea class="prop-input" onchange="updateNode('${node.id}', 'subtitle', this.value)">${node.subtitle || ''}</textarea>
+        </div>
+        
+        ${node.url !== undefined ? `
+          <div class="prop-group">
+            <label class="prop-label">URL</label>
+            <input type="text" class="prop-input" value="${node.url || ''}" onchange="updateNode('${node.id}', 'url', this.value)">
+          </div>
+        ` : ''}
+        
+        ${optionsHtml}
+        
+        <div class="prop-group" style="margin-top: 32px;">
+          <button class="btn btn-danger" style="width: 100%;" onclick="deleteNode('${node.id}')">Delete Node</button>
+        </div>
+      `;
+    }
+    
+    function updateNode(nodeId, field, value) {
+      const node = nodes.find(n => n.id === nodeId);
+      if (node) {
+        node[field] = value;
+        
+        // Update UI
+        const el = document.getElementById(nodeId);
+        if (field === 'title') {
+          el.querySelector('.node-title').textContent = value;
+        } else if (field === 'subtitle') {
+          let subtitleEl = el.querySelector('.node-subtitle');
+          if (!subtitleEl && value) {
+            subtitleEl = document.createElement('div');
+            subtitleEl.className = 'node-subtitle';
+            el.querySelector('.node-content').appendChild(subtitleEl);
+          }
+          if (subtitleEl) subtitleEl.textContent = value;
+        }
+      }
+    }
+    
+    function updateOption(nodeId, optIndex, field, value) {
+      const node = nodes.find(n => n.id === nodeId);
+      if (node && node.options[optIndex]) {
+        node.options[optIndex][field] = value;
+        // Refresh node display
+        document.getElementById(nodeId).remove();
+        createNodeElement(node);
+        drawConnections();
+      }
+    }
+    
+    function addOption(nodeId) {
+      const node = nodes.find(n => n.id === nodeId);
+      if (node) {
+        node.options.push({
+          id: `opt-${Date.now()}`,
+          label: 'New Option',
+          value: 'new_' + Date.now(),
+          connectedTo: null
+        });
+        document.getElementById(nodeId).remove();
+        createNodeElement(node);
+        drawConnections();
+        showNodeProperties(node);
+      }
+    }
+    
+    function removeOption(nodeId, optIndex) {
+      const node = nodes.find(n => n.id === nodeId);
+      if (node && node.options.length > 2) {
+        node.options.splice(optIndex, 1);
+        document.getElementById(nodeId).remove();
+        createNodeElement(node);
+        drawConnections();
+        showNodeProperties(node);
+      }
+    }
+    
+    function deleteNode(nodeId) {
+      nodes = nodes.filter(n => n.id !== nodeId);
+      connections = connections.filter(c => c.from !== nodeId && c.to !== nodeId);
+      document.getElementById(nodeId).remove();
+      drawConnections();
+      
+      document.getElementById('propertiesPanel').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">👆</div>
+          <div class="empty-state-title">Select a node</div>
+          <p>Click on any node to edit its properties</p>
+        </div>
+      `;
+    }
+    
+    function renderResources(resourcesData) {
+      const list = document.getElementById('resourcesList');
+      list.innerHTML = resourcesData.resources.map(r => `
+        <div class="resource-item" draggable="true" ondragstart="dragResource(event, '${r.id}')">
+          <div class="resource-name">${r.name}</div>
+          <div class="resource-meta">${r.category} • ${r.price}</div>
+        </div>
+      `).join('');
+    }
+    
+    // Drag and drop from palette
+    function dragPaletteItem(e, type) {
+      e.dataTransfer.setData('nodeType', type);
+    }
+    
+    function dragResource(e, resourceId) {
+      e.dataTransfer.setData('resourceId', resourceId);
+    }
+    
+    // Canvas drop
+    document.getElementById('canvasContainer').addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    
+    document.getElementById('canvas').addEventListener('drop', (e) => {
+      e.preventDefault();
+      const nodeType = e.dataTransfer.getData('nodeType');
+      const resourceId = e.dataTransfer.getData('resourceId');
+      
+      const rect = document.getElementById('canvas').getBoundingClientRect();
+      const x = (e.clientX - rect.left) / scale;
+      const y = (e.clientY - rect.top) / scale;
+      
+      if (nodeType) {
+        createNewNode(nodeType, x, y);
+      }
+    });
+    
+    function createNewNode(type, x, y) {
+      const node = {
+        id: `node-${nodeIdCounter++}`,
+        type: type === 'category' ? 'question' : type,
+        x: x - 140,
+        y: y - 40,
+        title: type === 'question' ? 'New Question' : 
+               type === 'result' ? 'New Result' : 'Logic Node',
+        subtitle: '',
+        options: type === 'question' || type === 'category' ? [
+          { id: `opt-${Date.now()}-1`, label: 'Option 1', value: 'opt1' },
+          { id: `opt-${Date.now()}-2`, label: 'Option 2', value: 'opt2' }
+        ] : null
+      };
+      
+      nodes.push(node);
+      createNodeElement(node);
+    }
+    
+    // Connection drawing
+    function startConnection(e, nodeId, optionId) {
+      e.stopPropagation();
+      isDrawing = true;
+      drawStart = { nodeId, optionId };
+      
+      const node = nodes.find(n => n.id === nodeId);
+      const svg = document.getElementById('connections');
+      
+      function onMouseMove(e) {
+        if (!isDrawing) return;
+        
+        const rect = document.getElementById('canvas').getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) / scale;
+        const mouseY = (e.clientY - rect.top) / scale;
+        
+        // Remove old drawing line
+        const oldLine = document.getElementById('drawing-line');
+        if (oldLine) oldLine.remove();
+        
+        // Draw new line
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.id = 'drawing-line';
+        path.setAttribute('class', 'drawing-line');
+        
+        const startX = node.x + 280;
+        const startY = node.y + 60;
+        
+        path.setAttribute('d', `M ${startX} ${startY} L ${mouseX} ${mouseY}`);
+        svg.appendChild(path);
+      }
+      
+      function onMouseUp(e) {
+        isDrawing = false;
+        const drawingLine = document.getElementById('drawing-line');
+        if (drawingLine) drawingLine.remove();
+        
+        // Check if dropped on a node
+        const targetEl = e.target.closest('.node');
+        if (targetEl && targetEl.id !== nodeId) {
+          // Create connection
+          connections.push({
+            id: `conn-${Date.now()}`,
+            from: nodeId,
+            to: targetEl.id,
+            fromOption: optionId
+          });
+          drawConnections();
+        }
+        
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    }
+    
+    // Tools
+    function setTool(tool) {
+      currentTool = tool;
+      document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    
+    // Zoom
+    function zoomIn() { scale = Math.min(scale * 1.2, 3); updateZoom(); }
+    function zoomOut() { scale = Math.max(scale / 1.2, 0.3); updateZoom(); }
+    function resetZoom() { scale = 1; updateZoom(); }
+    function updateZoom() { document.getElementById('canvas').style.transform = `scale(${scale})`; }
+    
+    // Sidebar tabs
+    function switchSidebarTab(tab) {
+      document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('sidebarPalette').classList.toggle('hidden', tab !== 'palette');
+      document.getElementById('sidebarResources').classList.toggle('hidden', tab !== 'resources');
+    }
+    
+    // Auto layout
+    function autoLayout() {
+      // Simple grid layout
+      const cols = 3;
+      nodes.forEach((node, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        node.x = 100 + col * 400;
+        node.y = 100 + row * 250;
+        
+        const el = document.getElementById(node.id);
+        el.style.left = node.x + 'px';
+        el.style.top = node.y + 'px';
+      });
+      drawConnections();
+      showToast('Auto layout applied');
+    }
+    
+    // Simulate
+    function simulateFlow() {
+      showToast('Simulation mode: Click any option to trace the flow');
+      // Add visual tracing
+    }
+    
+    // Save
+    function saveFlow() {
+      showToast('Flow saved!');
+      // Convert back to survey format and save
+    }
+    
+    function showToast(msg) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary);
+        color: white;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-weight: 500;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      `;
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+    
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+{
+  "username": "demo",
+  "title": "Let's find what you need",
+  "subtitle": "A few quick questions to point you in the right direction",
+  "theme": {
+    "primary": "#000000",
+    "background": "#ffffff",
+    "accent": "#007AFF"
+  },
+  "questions": [
+    {
+      "id": "role",
+      "text": "What best describes you?",
+      "subtitle": "This helps me understand where you're at",
+      "type": "single",
+      "options": [
+        {
+          "label": "🚀 Business Owner",
+          "value": "business_owner",
+          "description": "Running a company or agency",
+          "next": "revenue"
+        },
+        {
+          "label": "💡 Creator / Solopreneur",
+          "value": "creator",
+          "description": "Building a personal brand or content",
+          "next": "creator_goal"
+        },
+        {
+          "label": "🔧 Service Provider",
+          "value": "freelancer",
+          "description": "Designer, developer, consultant, etc.",
+          "next": "service_challenge"
+        }
+      ]
+    },
+    {
+      "id": "revenue",
+      "text": "What's your current monthly revenue?",
+      "subtitle": "Be honest — this helps me suggest the right resources",
+      "type": "single",
+      "options": [
+        {
+          "label": "Just starting out",
+          "value": "starting",
+          "description": "$0 — still figuring things out",
+          "next": "business_challenge"
+        },
+        {
+          "label": "$1K — $10K/month",
+          "value": "1k_10k",
+          "description": "Making money but inconsistent",
+          "next": "business_challenge"
+        },
+        {
+          "label": "$10K — $50K/month",
+          "value": "10k_50k",
+          "description": "Stable but want to scale",
+          "next": "business_challenge"
+        },
+        {
+          "label": "$50K+/month",
+          "value": "50k_plus",
+          "description": "Scaling and systematizing",
+          "next": "business_challenge"
+        }
+      ]
+    },
+    {
+      "id": "business_challenge",
+      "text": "What's your biggest challenge right now?",
+      "subtitle": "Pick the one that keeps you up at night",
+      "type": "single",
+      "options": [
+        {
+          "label": "📉 Getting consistent leads",
+          "value": "leads",
+          "description": "Sales are unpredictable"
+        },
+        {
+          "label": "⏰ Wearing too many hats",
+          "value": "operations",
+          "description": "Can't scale without working more hours"
+        },
+        {
+          "label": "💰 Pricing & profitability",
+          "value": "pricing",
+          "description": "Working hard but margins are thin"
+        },
+        {
+          "label": "👥 Building the right team",
+          "value": "team",
+          "description": "Hiring, delegating, managing"
+        }
+      ]
+    },
+    {
+      "id": "creator_goal",
+      "text": "What's your main focus right now?",
+      "subtitle": "What would change everything for you?",
+      "type": "single",
+      "options": [
+        {
+          "label": "📈 Growing my audience",
+          "value": "growth",
+          "description": "More followers, subscribers, reach"
+        },
+        {
+          "label": "💵 Monetizing what I've built",
+          "value": "monetize",
+          "description": "Turn attention into income"
+        },
+        {
+          "label": "🤝 Landing brand deals",
+          "value": "partnerships",
+          "description": "Working with companies I love"
+        }
+      ]
+    },
+    {
+      "id": "service_challenge",
+      "text": "What's holding you back from charging more?",
+      "subtitle": "The thing between you and 2x pricing",
+      "type": "single",
+      "options": [
+        {
+          "label": "😰 Confidence & positioning",
+          "value": "confidence",
+          "description": "Not sure I'm worth it yet"
+        },
+        {
+          "label": "📋 Lack of case studies",
+          "value": "portfolio",
+          "description": "Need more proof of results"
+        },
+        {
+          "label": "🎯 Finding better clients",
+          "value": "clients",
+          "description": "Current clients don't value quality"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "if": {
+        "role": "business_owner",
+        "revenue": "starting",
+        "business_challenge": "leads"
+      },
+      "then": {
+        "url": "https://gumroad.com",
+        "label": "The $0 to $10K Lead Gen Playbook",
+        "description": "The exact system I used to get my first 100 customers without spending a dime on ads.",
+        "cta": "Get the Playbook",
+        "emoji": "🎯"
+      }
+    },
+    {
+      "if": {
+        "role": "business_owner",
+        "revenue": "1k_10k",
+        "business_challenge": "leads"
+      },
+      "then": {
+        "url": "https://calendly.com",
+        "label": "Lead Generation Audit",
+        "description": "Let's look at your current funnel and find the 3 biggest leaks costing you customers.",
+        "cta": "Book Your Audit",
+        "emoji": "📞"
+      }
+    },
+    {
+      "if": {
+        "role": "business_owner",
+        "revenue": "10k_50k",
+        "business_challenge": "operations"
+      },
+      "then": {
+        "url": "https://notion.so",
+        "label": "Business OS Template",
+        "description": "The Notion system that helped me scale to $50K months while working 20 hours less per week.",
+        "cta": "Get the Template",
+        "emoji": "⚙️"
+      }
+    },
+    {
+      "if": {
+        "role": "business_owner",
+        "revenue": "50k_plus",
+        "business_challenge": "team"
+      },
+      "then": {
+        "url": "https://airtable.com",
+        "label": "Hiring Playbook for 7-Figure Founders",
+        "description": "How to hire A-players, delegate effectively, and build a team that runs without you.",
+        "cta": "Get the Playbook",
+        "emoji": "👥"
+      }
+    },
+    {
+      "if": {
+        "role": "business_owner",
+        "business_challenge": "pricing"
+      },
+      "then": {
+        "url": "https://stripe.com",
+        "label": "Pricing Strategy Calculator",
+        "description": "The framework for raising prices 2-3x without losing clients.",
+        "cta": "Get the Calculator",
+        "emoji": "💰"
+      }
+    },
+    {
+      "if": {
+        "role": "creator",
+        "creator_goal": "monetize"
+      },
+      "then": {
+        "url": "https://convertkit.com",
+        "label": "Creator Monetization Kit",
+        "description": "7 revenue streams that actually work (and how to pick the right one for you).",
+        "cta": "Get the Kit",
+        "emoji": "💵"
+      }
+    },
+    {
+      "if": {
+        "role": "creator",
+        "creator_goal": "growth"
+      },
+      "then": {
+        "url": "https://twitter.com",
+        "label": "The Growth Playbook",
+        "description": "How I grew from 0 to 50K followers in 6 months (the exact content system).",
+        "cta": "Get the Playbook",
+        "emoji": "📈"
+      }
+    },
+    {
+      "if": {
+        "role": "freelancer",
+        "service_challenge": "confidence"
+      },
+      "then": {
+        "url": "https://figma.com",
+        "label": "Positioning Masterclass",
+        "description": "How to position yourself as the premium option (even with less experience).",
+        "cta": "Watch the Class",
+        "emoji": "🎓"
+      }
+    },
+    {
+      "if": {
+        "role": "freelancer",
+        "service_challenge": "portfolio"
+      },
+      "then": {
+        "url": "https://webflow.com",
+        "label": "Portfolio Builder Template",
+        "description": "A portfolio that sells for you — includes copy, layout, and case study framework.",
+        "cta": "Get the Template",
+        "emoji": "💼"
+      }
+    }
+  ],
+  "default": {
+    "url": "https://linktr.ee",
+    "label": "My Resource Library",
+    "description": "Browse all my guides, templates, and tools.",
+    "cta": "See Everything",
+    "emoji": "📚"
+  },
+  "links": [
+    {
+      "label": "Twitter",
+      "url": "https://twitter.com",
+      "icon": "twitter"
+    },
+    {
+      "label": "Newsletter",
+      "url": "https://substack.com",
+      "icon": "mail"
+    },
+    {
+      "label": "YouTube",
+      "url": "https://youtube.com",
+      "icon": "youtube"
+    }
+  ]
+}

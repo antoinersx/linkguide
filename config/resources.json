@@ -1,0 +1,95 @@
+{
+  "owner": "demo",
+  "resources": [
+    {
+      "id": "high_ticket",
+      "name": "High Ticket Implementation",
+      "description": "Done-for-you setup and implementation. I personally build your systems, funnels, and automation.",
+      "url": "https://calendly.com/high-ticket-call",
+      "price": "high",
+      "format": "done_for_you",
+      "category": "business",
+      "requirements": {
+        "budget": ["$10K+", "$5K-10K"],
+        "commitment": "high",
+        "timeline": "immediate"
+      },
+      "tags": ["business", "implementation", "premium"]
+    },
+    {
+      "id": "cool_community",
+      "name": "The Cool Community",
+      "description": "Join 500+ entrepreneurs sharing strategies, wins, and connections. Weekly calls and exclusive resources.",
+      "url": "https://skool.com/cool-community",
+      "price": "low",
+      "format": "community",
+      "category": "learning",
+      "requirements": {
+        "budget": ["Under $100", "$100-500", "$500-1K"],
+        "style": "learning_together"
+      },
+      "tags": ["community", "learning", "networking"]
+    },
+    {
+      "id": "investment_community",
+      "name": "Investment Alpha Group",
+      "description": "Private investment community. Deal flow, due diligence, and portfolio strategies.",
+      "url": "https://discord.gg/investment-alpha",
+      "price": "medium",
+      "format": "community",
+      "category": "investing",
+      "requirements": {
+        "interest": "investing",
+        "experience": ["intermediate", "advanced"]
+      },
+      "tags": ["investing", "deals", "portfolio"]
+    },
+    {
+      "id": "trading_tools",
+      "name": "Pro Trading Terminal + Tools",
+      "description": "Custom trading dashboards, alerts, and proprietary indicators I built for my own trading.",
+      "url": "https://gumroad.com/trading-tools",
+      "price": "medium",
+      "format": "tools",
+      "category": "trading",
+      "requirements": {
+        "interest": "trading",
+        "active": true
+      },
+      "tags": ["trading", "tools", "dashboard"]
+    },
+    {
+      "id": "ai_tools_checklist",
+      "name": "My Complete AI Stack",
+      "description": "Every AI tool I use to run my business, create content, and automate workflows. With tutorials.",
+      "url": "https://notion.so/ai-tools-template",
+      "price": "free",
+      "format": "checklist",
+      "category": "ai",
+      "requirements": {
+        "interest": "ai",
+        "goal": "productivity"
+      },
+      "tags": ["ai", "tools", "automation", "free"]
+    },
+    {
+      "id": "crypto_tools_checklist",
+      "name": "Crypto & Web3 Tool Stack",
+      "description": "Security setup, wallet management, research tools, and on-chain analysis tools I use daily.",
+      "url": "https://notion.so/crypto-tools-template",
+      "price": "free",
+      "format": "checklist",
+      "category": "crypto",
+      "requirements": {
+        "interest": "crypto",
+        "goal": ["security", "research", "trading"]
+      },
+      "tags": ["crypto", "web3", "security", "free"]
+    }
+  ],
+  "links": [
+    { "label": "Twitter", "url": "https://twitter.com", "icon": "twitter" },
+    { "label": "Newsletter", "url": "https://substack.com", "icon": "mail" },
+    { "label": "YouTube", "url": "https://youtube.com", "icon": "youtube" }
+  ]
+}

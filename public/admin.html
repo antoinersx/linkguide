@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LinkGuide Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --primary: #000000;
+      --primary-text: #ffffff;
+      --surface: #f5f5f5;
+      --surface-hover: #eeeeee;
+      --border: #e5e5e5;
+      --accent: #007AFF;
+      --success: #34C759;
+      --danger: #FF3B30;
+      --warning: #FF9500;
+      --radius: 16px;
+      --radius-lg: 20px;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    
+    .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .header-actions { display: flex; gap: 8px; }
+    
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      transition: background 0.2s;
+    }
+    .icon-btn:hover { background: var(--surface-hover); }
+    
+    /* Content */
+    .content { flex: 1; padding: 20px; }
+    .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .page-subtitle { color: var(--text-secondary); font-size: 15px; margin-bottom: 24px; }
+    
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); padding: 16px; border-radius: var(--radius); }
+    .stat-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .stat-label { font-size: 13px; color: var(--text-secondary); }
+    
+    /* Section */
+    .section { margin-bottom: 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .section-title { font-size: 20px; font-weight: 600; }
+    
+    /* Resources */
+    .resource-list { display: flex; flex-direction: column; gap: 12px; }
+    .resource-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    .resource-card:hover { border-color: var(--primary); transform: translateX(4px); }
+    .resource-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .resource-name { font-weight: 600; font-size: 16px; }
+    .resource-price { font-size: 13px; padding: 4px 10px; background: var(--bg); border-radius: 20px; font-weight: 500; }
+    .resource-desc { color: var(--text-secondary); font-size: 14px; line-height: 1.4; margin-bottom: 12px; }
+    .resource-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; color: var(--text-muted); }
+    
+    /* Add Button */
+    .add-btn {
+      background: var(--primary);
+      color: var(--primary-text);
+      border: none;
+      padding: 16px 24px;
+      border-radius: var(--radius-lg);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .add-btn:hover { transform: translateY(-2px); }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+    .tab {
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.2s;
+      background: var(--surface);
+      border: none;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--primary); color: var(--primary-text); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Form */
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+    textarea { min-height: 100px; resize: vertical; }
+    
+    /* ===== SURVEY EDITOR ===== */
+    .editor-help {
+      background: #E3F2FD;
+      border: 1px solid #90CAF9;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .editor-help strong { display: block; margin-bottom: 4px; color: #1565C0; }
+    
+    .question-editor {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .question-editor:hover { border-color: var(--border); }
+    .question-editor.editing { border-color: var(--accent); }
+    
+    .question-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .question-number {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .question-actions { display: flex; gap: 8px; }
+    .q-action {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .q-action:hover { background: var(--primary); color: white; }
+    .q-action.delete:hover { background: var(--danger); }
+    
+    .question-text-input {
+      width: 100%;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin-bottom: 8px;
+    }
+    .question-text-input:focus { outline: none; }
+    
+    .question-subtitle-input {
+      width: 100%;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin-bottom: 16px;
+    }
+    .question-subtitle-input:focus { outline: none; }
+    
+    .options-list-editor { display: flex; flex-direction: column; gap: 8px; }
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .option-row:hover { border-color: var(--border); }
+    .option-row.dragging { opacity: 0.5; }
+    
+    .option-drag {
+      width: 24px;
+      height: 24px;
+      cursor: grab;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .option-drag:active { cursor: grabbing; }
+    
+    .option-icon-input {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 20px;
+      border: none;
+      background: transparent;
+    }
+    .option-icon-input:focus { outline: none; }
+    
+    .option-text-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .option-text-input:focus { outline: none; }
+    
+    .option-desc-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .option-desc-input:focus { outline: none; }
+    
+    .option-delete {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      border-radius: 8px;
+    }
+    .option-delete:hover { background: var(--danger); color: white; }
+    
+    .add-option-btn {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .add-option-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .add-option-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .option-limit-warning {
+      font-size: 12px;
+      color: var(--warning);
+      margin-top: 8px;
+      text-align: center;
+    }
+    
+    .editor-toolbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      max-width: 430px;
+      margin: 0 auto;
+    }
+    
+    .btn { flex: 1; padding: 16px; border-radius: var(--radius); font-size: 16px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--primary); color: var(--primary-text); }
+    .btn-secondary { background: var(--surface); color: var(--text); }
+    .btn-danger { background: var(--danger); color: white; }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg);
+      width: 100%;
+      max-width: 430px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg); }
+    .modal-title { font-size: 20px; font-weight: 700; }
+    .modal-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--surface); font-size: 20px; cursor: pointer; }
+    .modal-body { padding: 20px; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; }
+    
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--primary);
+      color: var(--primary-text);
+      padding: 14px 24px;
+      border-radius: var(--radius);
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    
+    /* Preview */
+    .preview-question { background: var(--surface); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+    .preview-title { font-weight: 600; margin-bottom: 8px; }
+    .preview-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .preview-option { background: var(--bg); padding: 6px 12px; border-radius: 20px; font-size: 13px; }
+    
+    /* Login */
+    .login-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .login-logo { font-size: 48px; margin-bottom: 16px; }
+    .login-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .login-subtitle { color: var(--text-secondary); margin-bottom: 32px; }
+    
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login -->
+    <div id="loginView" class="login-container">
+      <div class="login-logo">🔗</div>
+      <h1 class="login-title">LinkGuide Admin</h1>
+      <p class="login-subtitle">Manage your resources and survey</p>
+      <div class="form-group">
+        <input type="password" id="tokenInput" placeholder="Enter access token">
+      </div>
+      <button class="add-btn" onclick="login()">Enter Dashboard</button>
+    </div>
+
+    <!-- Main App -->
+    <div id="appView" class="hidden">
+      <header class="header">
+        <div class="logo">🔗 LinkGuide</div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="previewSurvey()" title="Preview">👁</button>
+          <button class="icon-btn" onclick="logout()" title="Logout">→</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('resources', this)">Resources</button>
+          <button class="tab" onclick="switchTab('survey', this)">Survey Editor</button>
+          <button class="tab" onclick="switchTab('analytics', this)">Analytics</button>
+        </div>
+
+        <!-- Resources Tab -->
+        <div id="resourcesTab" class="tab-content active">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">Your Resources</h2>
+            </div>
+            <p class="page-subtitle">Define what you offer. AI generates questions to match visitors.</p>
+            <div id="resourcesList" class="resource-list"></div>
+            <button class="add-btn" onclick="openAddModal()">+ Add Resource</button>
+          </div>
+        </div>
+
+        <!-- Survey Editor Tab -->
+        <div id="surveyTab" class="tab-content">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">Edit Survey Flow</h2>
+            </div>
+            <div class="editor-help">
+              <strong>💡 Tip: Keep it simple!</strong>
+              Max 5 options per question. Drag options to reorder. Click text to edit. Delete what you don't need.
+            </div>
+            <div id="surveyEditor"></div>
+            <div style="height: 100px;"></div> <!-- Spacer for toolbar -->
+          </div>
+          
+          <div class="editor-toolbar">
+            <button class="btn btn-secondary" onclick="resetSurvey()">🔄 Regenerate</button>
+            <button class="btn btn-primary" onclick="saveSurveyChanges()">💾 Save Changes</button>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analyticsTab" class="tab-content">
+          <div class="section">
+            <h2 class="section-title">Overview</h2>
+            <div class="stats-grid">
+              <div class="stat-card"><div class="stat-value" id="statViews">-</div><div class="stat-label">Views</div></div>
+              <div class="stat-card"><div class="stat-value" id="statStarted">-</div><div class="stat-label">Started</div></div>
+              <div class="stat-card"><div class="stat-value" id="statCompleted">-</div><div class="stat-label">Completed</div></div>
+              <div class="stat-card"><div class="stat-value" id="statRate">-%</div><div class="stat-label">Rate</div></div>
+            </div>
+          </div>
+          <div class="section">
+            <h2 class="section-title">Top Resources Clicked</h2>
+            <div id="topLinksList" class="resource-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Resource Modal -->
+  <div id="resourceModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Add Resource</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Resource Name</label>
+          <input type="text" id="resName" placeholder="e.g. High Ticket Consulting">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="resDesc" placeholder="What do they get?"></textarea>
+        </div>
+        <div class="form-group">
+          <label>URL</label>
+          <input type="url" id="resUrl" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Price Tier</label>
+          <select id="resPrice">
+            <option value="free">Free</option>
+            <option value="low">$ - Low ($1-100)</option>
+            <option value="medium">$$ - Medium ($100-1K)</option>
+            <option value="high">$$$ - High ($1K+)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Format</label>
+          <select id="resFormat">
+            <option value="done_for_you">Done For You (Service)</option>
+            <option value="community">Community / Membership</option>
+            <option value="tools">Tools / Software</option>
+            <option value="checklist">Template / Checklist</option>
+            <option value="course">Course / Content</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="resCategory">
+            <option value="business">Business</option>
+            <option value="investing">Investing</option>
+            <option value="trading">Trading</option>
+            <option value="ai">AI / Tech</option>
+            <option value="crypto">Crypto / Web3</option>
+            <option value="learning">Learning / Skills</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveResource()">Save Resource</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let token = localStorage.getItem('lg_token') || '';
+    let resources = null;
+    let survey = null;
+    let editingId = null;
+    let surveyModified = false;
+
+    if (token) login();
+
+    async function login() {
+      if (!token) token = document.getElementById('tokenInput').value;
+      localStorage.setItem('lg_token', token);
+      
+      try {
+        const res = await fetch('/api/admin/resources', { headers: { 'X-Token': token } });
+        if (!res.ok) throw new Error('Invalid token');
+        resources = await res.json();
+        
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('appView').classList.remove('hidden');
+        renderResources();
+        loadSurvey();
+      } catch (err) {
+        showToast('Invalid token');
+        token = '';
+      }
+    }
+
+    function logout() { localStorage.removeItem('lg_token'); token = ''; location.reload(); }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(tab + 'Tab').classList.add('active');
+      if (tab === 'analytics') loadAnalytics();
+    }
+
+    function renderResources() {
+      const list = document.getElementById('resourcesList');
+      if (!resources.resources || resources.resources.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 40px;">No resources yet. Add your first!</p>';
+        return;
+      }
+      list.innerHTML = resources.resources.map(r => `
+        <div class="resource-card" onclick="editResource('${r.id}')">
+          <div class="resource-header">
+            <div class="resource-name">${r.name}</div>
+            <div class="resource-price">${r.price}</div>
+          </div>
+          <div class="resource-desc">${r.description}</div>
+          <div class="resource-tags"><span class="tag">${r.category}</span><span class="tag">${r.format}</span></div>
+        </div>
+      `).join('');
+    }
+
+    async function loadSurvey() {
+      const res = await fetch('/api/admin/survey', { headers: { 'X-Token': token } });
+      survey = await res.json();
+      renderSurveyEditor();
+    }
+
+    function renderSurveyEditor() {
+      const container = document.getElementById('surveyEditor');
+      container.innerHTML = survey.questions.map((q, qIndex) => `
+        <div class="question-editor" data-index="${qIndex}">
+          <div class="question-header-row">
+            <span class="question-number">Question ${qIndex + 1}</span>
+            <div class="question-actions">
+              ${qIndex > 0 ? `<button class="q-action" onclick="moveQuestion(${qIndex}, -1)" title="Move up">↑</button>` : ''}
+              ${qIndex < survey.questions.length - 1 ? `<button class="q-action" onclick="moveQuestion(${qIndex}, 1)" title="Move down">↓</button>` : ''}
+              <button class="q-action delete" onclick="deleteQuestion(${qIndex})" title="Delete">×</button>
+            </div>
+          </div>
+          <input type="text" class="question-text-input" value="${q.text}" onchange="updateQuestionText(${qIndex}, this.value)" placeholder="Question text">
+          <input type="text" class="question-subtitle-input" value="${q.subtitle || ''}" onchange="updateQuestionSubtitle(${qIndex}, this.value)" placeholder="Subtitle (optional)">
+          
+          <div class="options-list-editor">
+            ${q.options.map((opt, oIndex) => `
+              <div class="option-row" draggable="true" ondragstart="dragStart(event, ${qIndex}, ${oIndex})" ondragover="dragOver(event)" ondrop="drop(event, ${qIndex}, ${oIndex})">
+                <span class="option-drag">⋮⋮</span>
+                <input type="text" class="option-icon-input" value="${opt.label.charAt(0)}" onchange="updateOptionIcon(${qIndex}, ${oIndex}, this.value)" maxlength="2">
+                <div style="flex: 1;">
+                  <input type="text" class="option-text-input" value="${opt.label.substring(2).trim()}" onchange="updateOptionLabel(${qIndex}, ${oIndex}, this.value)" placeholder="Option label">
+                  <input type="text" class="option-desc-input" value="${opt.description || ''}" onchange="updateOptionDesc(${qIndex}, ${oIndex}, this.value)" placeholder="Description (optional)">
+                </div>
+                <button class="option-delete" onclick="deleteOption(${qIndex}, ${oIndex})">×</button>
+              </div>
+            `).join('')}
+            <button class="add-option-btn" onclick="addOption(${qIndex})" ${q.options.length >= 5 ? 'disabled' : ''}>+ Add Option</button>
+            ${q.options.length >= 5 ? '<div class="option-limit-warning">Max 5 options recommended</div>' : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Survey editing functions
+    function updateQuestionText(qIndex, value) {
+      survey.questions[qIndex].text = value;
+      surveyModified = true;
+    }
+
+    function updateQuestionSubtitle(qIndex, value) {
+      survey.questions[qIndex].subtitle = value;
+      surveyModified = true;
+    }
+
+    function updateOptionLabel(qIndex, oIndex, value) {
+      const icon = survey.questions[qIndex].options[oIndex].label.charAt(0);
+      survey.questions[qIndex].options[oIndex].label = icon + ' ' + value;
+      surveyModified = true;
+    }
+
+    function updateOptionIcon(qIndex, oIndex, value) {
+      const text = survey.questions[qIndex].options[oIndex].label.substring(2).trim();
+      survey.questions[qIndex].options[oIndex].label = value + ' ' + text;
+      surveyModified = true;
+    }
+
+    function updateOptionDesc(qIndex, oIndex, value) {
+      survey.questions[qIndex].options[oIndex].description = value;
+      surveyModified = true;
+    }
+
+    function deleteOption(qIndex, oIndex) {
+      if (survey.questions[qIndex].options.length <= 2) {
+        showToast('Need at least 2 options');
+        return;
+      }
+      survey.questions[qIndex].options.splice(oIndex, 1);
+      surveyModified = true;
+      renderSurveyEditor();
+    }
+
+    function addOption(qIndex) {
+      if (survey.questions[qIndex].options.length >= 5) {
+        showToast('Max 5 options recommended');
+        return;
+      }
+      survey.questions[qIndex].options.push({
+        label: '🔘 New Option',
+        value: 'new_option_' + Date.now(),
+        description: ''
+      });
+      surveyModified = true;
+      renderSurveyEditor();
+    }
+
+    function moveQuestion(qIndex, direction) {
+      const newIndex = qIndex + direction;
+      if (newIndex < 0 || newIndex >= survey.questions.length) return;
+      
+      const temp = survey.questions[qIndex];
+      survey.questions[qIndex] = survey.questions[newIndex];
+      survey.questions[newIndex] = temp;
+      
+      surveyModified = true;
+      renderSurveyEditor();
+    }
+
+    function deleteQuestion(qIndex) {
+      if (survey.questions.length <= 1) {
+        showToast('Need at least 1 question');
+        return;
+      }
+      if (!confirm('Delete this question?')) return;
+      survey.questions.splice(qIndex, 1);
+      surveyModified = true;
+      renderSurveyEditor();
+    }
+
+    // Drag and drop
+    let dragSource = null;
+    function dragStart(e, qIndex, oIndex) {
+      dragSource = { qIndex, oIndex };
+      e.target.classList.add('dragging');
+    }
+    function dragOver(e) { e.preventDefault(); }
+    function drop(e, qIndex, oIndex) {
+      e.preventDefault();
+      if (!dragSource || dragSource.qIndex !== qIndex) return;
+      
+      const options = survey.questions[qIndex].options;
+      const [removed] = options.splice(dragSource.oIndex, 1);
+      options.splice(oIndex, 0, removed);
+      
+      surveyModified = true;
+      renderSurveyEditor();
+    }
+
+    async function saveSurveyChanges() {
+      // Rebuild the rules based on updated questions
+      // For now, just regenerate from resources
+      await regenerate();
+      showToast('Survey saved!');
+      surveyModified = false;
+    }
+
+    async function resetSurvey() {
+      if (surveyModified && !confirm('Lose your changes and regenerate?')) return;
+      await regenerate();
+    }
+
+    async function regenerate() {
+      const res = await fetch('/api/admin/regenerate', {
+        method: 'POST',
+        headers: { 'X-Token': token }
+      });
+      if (!res.ok) { showToast('Failed to regenerate'); return; }
+      const result = await res.json();
+      await loadSurvey();
+      showToast(`Regenerated: ${result.questions} questions, ${result.rules} rules`);
+      surveyModified = false;
+    }
+
+    async function loadAnalytics() {
+      const res = await fetch('/api/admin/analytics', { headers: { 'X-Token': token } });
+      const data = await res.json();
+      document.getElementById('statViews').textContent = data.pageViews;
+      document.getElementById('statStarted').textContent = data.sessions;
+      document.getElementById('statCompleted').textContent = data.completions;
+      document.getElementById('statRate').textContent = data.completionRate + '%';
+      
+      const linksList = document.getElementById('topLinksList');
+      linksList.innerHTML = data.topLinks.length > 0
+        ? data.topLinks.map(link => `
+            <div class="resource-card">
+              <div class="resource-header">
+                <div class="resource-name">${link.label || 'Link'}</div>
+                <div class="resource-price">${link.clicks} clicks</div>
+              </div>
+            </div>
+          `).join('')
+        : '<p style="color: var(--text-secondary);">No clicks yet</p>';
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.getElementById('modalTitle').textContent = 'Add Resource';
+      document.getElementById('resName').value = '';
+      document.getElementById('resDesc').value = '';
+      document.getElementById('resUrl').value = '';
+      document.getElementById('resPrice').value = 'free';
+      document.getElementById('resFormat').value = 'done_for_you';
+      document.getElementById('resCategory').value = 'business';
+      document.getElementById('resourceModal').classList.add('active');
+    }
+
+    function editResource(id) {
+      const r = resources.resources.find(x => x.id === id);
+      if (!r) return;
+      editingId = id;
+      document.getElementById('modalTitle').textContent = 'Edit Resource';
+      document.getElementById('resName').value = r.name;
+      document.getElementById('resDesc').value = r.description;
+      document.getElementById('resUrl').value = r.url;
+      document.getElementById('resPrice').value = r.price;
+      document.getElementById('resFormat').value = r.format;
+      document.getElementById('resCategory').value = r.category;
+      document.getElementById('resourceModal').classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (!e || e.target === document.getElementById('resourceModal')) {
+        document.getElementById('resourceModal').classList.remove('active');
+      }
+    }
+
+    async function saveResource() {
+      const newResource = {
+        id: editingId || 'res_' + Date.now(),
+        name: document.getElementById('resName').value,
+        description: document.getElementById('resDesc').value,
+        url: document.getElementById('resUrl').value,
+        price: document.getElementById('resPrice').value,
+        format: document.getElementById('resFormat').value,
+        category: document.getElementById('resCategory').value,
+        requirements: {},
+        tags: []
+      };
+      if (!newResource.name || !newResource.url) { showToast('Please fill in name and URL'); return; }
+      
+      if (editingId) {
+        const idx = resources.resources.findIndex(r => r.id === editingId);
+        resources.resources[idx] = newResource;
+      } else {
+        resources.resources.push(newResource);
+      }
+      
+      const res = await fetch('/api/admin/resources', {
+        method: 'POST',
+        headers: { 'X-Token': token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(resources)
+      });
+      if (!res.ok) { showToast('Failed to save'); return; }
+      
+      closeModal();
+      renderResources();
+      loadSurvey();
+      showToast('Resource saved!');
+    }
+
+    function previewSurvey() { window.open('/@demo', '_blank'); }
+    function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+  </script>
+</body>
+</html>

@@ -1,16 +1,40 @@
 {
-  "name": "link-guide",
+  "name": "linkguide",
   "version": "1.0.0",
-  "description": "Smart bio link with survey-driven results",
+  "description": "Transform your bio link into an intelligent, conversational experience",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "test": "echo 'Tests coming soon' && exit 0",
+    "lint": "echo 'Linting coming soon' && exit 0",
+    "deploy": "railway up"
+  },
+  "keywords": [
+    "bio-link",
+    "survey",
+    "quiz",
+    "recommendation",
+    "marketing",
+    "creator-tools"
+  ],
+  "author": "antoinersx",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antoinersx/linkguide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/antoinersx/linkguide/issues"
+  },
+  "homepage": "https://github.com/antoinersx/linkguide#readme",
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "fastify": "^4.26.0",
-    "@fastify/static": "^6.12.0",
     "@fastify/cors": "^9.0.0",
+    "@fastify/static": "^6.12.0",
+    "fastify": "^4.26.0",
     "sqlite3": "^5.1.7",
     "zod": "^3.22.4"
   },
